@@ -1,6 +1,7 @@
 package com.example.pokegama
 
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -25,5 +26,41 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
         navView.setupWithNavController(navController)
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        Log.d("MainActivity", "onStart: Location tracking started")
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Start to activate GPS sensor (event listener)
+        // Fetch data from API
+        // Fetch position from GPS
+        Log.d("MainActivity", "onResume: Fetch data from API & GPS")
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // Shutdown GPS
+        Log.d("MainActivity", "onPause: Pausing tracking")
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        // Stop fetch data
+        Log.d("MainActivity", "onStop: Stopping location tracking")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // Clean up resources
+        Log.d("MainActivity", "onDestroy: Cleaning up resources")
     }
 }
