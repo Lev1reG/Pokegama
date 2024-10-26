@@ -11,12 +11,12 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.pokegama.databinding.ActivityMainBinding
-import com.example.pokegama.ui.splashScreen.SplashVewModel
+import com.example.pokegama.ui.splashScreen.SplashViewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val viewModel by viewModels<SplashVewModel>()
+    private val viewModel by viewModels<SplashViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
