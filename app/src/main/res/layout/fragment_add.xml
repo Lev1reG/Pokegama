@@ -6,31 +6,124 @@
     android:layout_height="match_parent"
     tools:context=".ui.add.AddFragment">
 
-
     <ScrollView
         android:id="@+id/scroll_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/title_addfacility"
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Add an ImageView inside the LinearLayout -->
-            <ImageView
+            <TextView
+                android:id="@+id/addfacility_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:layout_gravity="start"
+                android:textColor="@color/black"
+                android:text="@string/addfacility_description"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/addfacility_title_facility"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:layout_gravity="start"
+                android:textColor="@color/black"
+                android:text="@string/addfacility_title_facility"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="20sp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/add" />
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                app:boxStrokeColor="@color/gray_700">
 
+                <AutoCompleteTextView
+                    android:id="@+id/addfacility_facilityAutoComplete"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:inputType="none"
+                    android:background="@drawable/stroke_outer"
+                    android:text="@string/addfacility_facility_hint"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/addfacility_title_facilityphoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:layout_gravity="start"
+                android:textColor="@color/black"
+                android:text="@string/addfacility_title_facilityphoto"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="20sp" />
+
+            <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                card_view:cardElevation="0dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp">
+                <TextView
+                    android:id="@+id/addfacility_facilityphoto_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:paddingTop="18dp"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:layout_gravity="start"
+                    android:background="@drawable/stroke_outer"
+                    android:textColor="@color/black"
+                    android:text="@string/addfacility_facilityphoto_hint"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="16sp" />
+                <Button
+                    style="@style/button"
+                    android:id="@+id/addfacility_facilityphoto_button"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_gravity="end"
+                    android:text="Upload"/>
+            </androidx.cardview.widget.CardView>
         </LinearLayout>
-
     </ScrollView>
+
+    <TextView
+        android:id="@+id/title_addfacility"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="42dp"
+        android:layout_gravity="start"
+        android:textColor="@color/blue_500"
+        android:text="@string/title_addfacility"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="36sp" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,24 @@
 <resources>
     <string name="app_name">Pokegama</string>
     <string name="title_home">Home</string>
+
     <string name="title_add">Add</string>
+    <string name="title_addfacility">Tambah Fasilitas</string>
+    <string name="addfacility_description">
+        Tambah Fasilitas apabila terdapat Toyagama,
+        Bus UGM, ataupun Sepeda Kampus yang belum terdapat di aplikasi.
+        Masukan akan diverifikasi admin.
+    </string>
+    <string name="addfacility_title_facility">Fasilitas</string>
+    <string name="addfacility_facility_hint">Pilih jenis fasilitas</string>"
+    <string-array name="facility_list">
+        <item>Toyagama</item>
+        <item>Bus UGM Stop</item>
+        <item>Sepeda Kampus</item>
+    </string-array>
+
+    <string name="addfacility_title_facilityphoto">Foto Fasilitas (untuk Verifikasi)</string>
+    <string name="addfacility_facilityphoto_hint">Upload Gambar (JPG, PNG)</string>"
+
     <string name="title_about">About Us</string>
 </resources>
