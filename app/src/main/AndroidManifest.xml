@@ -12,8 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pokegama"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
+            android:theme="@style/Theme.App.SplashScreen"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>

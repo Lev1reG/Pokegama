@@ -13,4 +13,10 @@
         <item name="android:statusBarColor">@color/purple_200</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/purple_500</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/animated_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.Pokegama</item>
+    </style>
 </resources>
