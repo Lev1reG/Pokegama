@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 
-class SplashVewModel : ViewModel() {
+class SplashViewModel : ViewModel() {
     private val _isReady = MutableStateFlow(false)
     val isReady = _isReady.asStateFlow()
 
