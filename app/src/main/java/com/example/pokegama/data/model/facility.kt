@@ -1,7 +1,6 @@
 package com.example.pokegama.data.model
 
 data class Facility(
-    val id: String,
     val type: String,
     val name: String,
     val imageUri: String,

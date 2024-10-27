@@ -5,6 +5,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import androidx.fragment.app.viewModels
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,9 +15,8 @@ import android.widget.Button
 import android.widget.Toast
 import com.example.pokegama.R
 import com.example.pokegama.data.model.Facility
+import com.example.pokegama.data.repo.FacilityRepo
 import com.example.pokegama.databinding.FragmentAddBinding
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -31,8 +31,8 @@ class AddFragment : Fragment() {
     private var _binding: FragmentAddBinding? = null
     private val binding get() = _binding!!
     private val db = Firebase.firestore
+    private val facilityRepo = FacilityRepo(db)
     private lateinit var button: Button
-    private lateinit var databaseReference: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,16 +67,23 @@ class AddFragment : Fragment() {
         }
 
         binding.addfacilitySubmit.setOnClickListener{
+            db.collection("facilities").get()
+                .addOnSuccessListener { result ->
+                    for (document in result) {
+                        Log.d("TAG", "${document.id} => ${document.data}")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w("TAG", "Error getting documents.", exception)
+                }
             val _facility = binding.addfacilityFacilityAutoComplete.text.toString()
             val _name = binding.addfacilityNameTextView.text.toString()
             val _faculty = binding.addfacilityFacultyAutoComplete.text.toString()
             val _imageUri = binding.addfacilityFacilityphotoHint.text.toString()
             val _description = binding.addfacilityDescriptionTextView.text.toString()
 
-            databaseReference = FirebaseDatabase.getInstance().getReference("Facilities Information")
-            val _facilityId = databaseReference.push().key!!
-            val facilityData = Facility(id = _facilityId, type = _facility, faculty = _faculty, name = _name, imageUri = _imageUri, description = _description)
-            db.collection("facilities").document(_facilityId).set(facilityData).addOnSuccessListener {
+            val facilityData = Facility(type = _facility, faculty = _faculty, name = _name, imageUri = _imageUri, description = _description)
+            db.collection("facilities").add(facilityData).addOnSuccessListener {
                 binding.addfacilityNameTextView.text.clear()
                 binding.addfacilityFacilityAutoComplete.text.clear()
                 binding.addfacilityFacultyAutoComplete.text.clear()
