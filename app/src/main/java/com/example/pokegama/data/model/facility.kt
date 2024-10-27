@@ -4,9 +4,10 @@ data class Facility(
     val id: String,
     val type: String,
     val name: String,
+    val imageUri: String,
     val faculty: String,
-    val latitude: Double,
-    val longitude: Double,
-    val description: String,
-    var isAccepted: Boolean
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0,
+    val description: String? = null,
+    var isAccepted: Boolean = false
 )
