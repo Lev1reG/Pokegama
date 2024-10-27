@@ -34,6 +34,27 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
         navView.setupWithNavController(navController)
+        navView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    navController.navigate(R.id.navigation_home)
+                    true
+                }
+                R.id.navigation_add -> {
+                    navController.navigate(R.id.navigation_add)
+                    true
+                }
+                R.id.navigation_about -> {
+                    navController.navigate(R.id.navigation_about)
+                    true
+                }
+                R.id.navigation_facilities -> {
+                    navController.navigate(R.id.navigation_facilities)
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     override fun onStart() {

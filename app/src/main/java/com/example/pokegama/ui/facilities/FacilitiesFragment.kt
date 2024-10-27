@@ -11,15 +11,11 @@ import com.example.pokegama.databinding.FragmentFacilitiesBinding
 
 class FacilitiesFragment : Fragment() {
     private var facilityType: String? = null
-
     private var _binding: FragmentFacilitiesBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            facilityType = it.getString("facility_type")
-        }
     }
 
     override fun onCreateView(
@@ -27,6 +23,9 @@ class FacilitiesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentFacilitiesBinding.inflate(inflater, container, false)
+        arguments?.let {
+            facilityType = it.getString("facility_type")
+        }
         return binding.root
     }
 
