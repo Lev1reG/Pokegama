@@ -49,4 +49,6 @@
     <string name="addfacility_description_hint">Contoh : Depan masjid kampus</string>
 
     <string name="title_about">About Us</string>
+
+    <string name="title_facilities">Facilities</string>
 </resources>
