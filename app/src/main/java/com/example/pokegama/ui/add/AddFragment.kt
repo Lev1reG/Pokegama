@@ -14,7 +14,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Toast
 import com.example.pokegama.R
-import com.example.pokegama.data.model.Facility
+import com.example.pokegama.data.model.local.Facility
 import com.example.pokegama.data.repo.FacilityRepo
 import com.example.pokegama.databinding.FragmentAddBinding
 import com.google.firebase.firestore.ktx.firestore

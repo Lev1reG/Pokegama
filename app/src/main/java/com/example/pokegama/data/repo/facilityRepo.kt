@@ -3,7 +3,7 @@ package com.example.pokegama.data.repo
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.pokegama.data.model.Facility
+import com.example.pokegama.data.model.local.Facility
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
