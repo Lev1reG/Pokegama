@@ -15,6 +15,9 @@ interface FacilityDao {
     @Query("SELECT * FROM facility_table")
     fun getFacility(): Flow<List<Facility>>
 
+    @Query("SELECT * FROM facility_table WHERE type = :facilityType")
+    fun getFacilityOfType(facilityType: String): Flow<List<Facility>>
+
     @Query("DELETE FROM facility_table")
     suspend fun deleteAll()
 }

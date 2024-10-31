@@ -8,7 +8,6 @@ class FacilityMapper : Mapper<Facility, FacilityDTO>{
         return Facility(
             type = dto.type,
             name = dto.name,
-            imageUri = dto.facilityImg,
             faculty = dto.faculty,
             latitude = dto.latitude,
             longitude = dto.longitude,
@@ -25,7 +24,6 @@ class FacilityMapper : Mapper<Facility, FacilityDTO>{
         return FacilityDTO(
             type = entity.type,
             name = entity.name,
-            facilityImg = entity.imageUri,
             faculty = entity.faculty,
             latitude = entity.latitude,
             longitude = entity.longitude,

@@ -4,9 +4,11 @@ import com.example.pokegama.data.local.room.FacilityDao
 import com.example.pokegama.data.model.local.Facility
 import javax.inject.Inject
 
-class FacilityDataSource @Inject constructor(private val facilityDao: FacilityDao) {
+class RoomFacilityDataSource @Inject constructor(private val facilityDao: FacilityDao) {
 
     fun getFacility() = facilityDao.getFacility()
+
+    fun getFacilityOfType(facilityType: String) = facilityDao.getFacilityOfType(facilityType)
 
     suspend fun insertAllFacility(items: List<Facility>) = facilityDao.insertAllFacility(items)
 
