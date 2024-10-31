@@ -106,4 +106,5 @@ dependencies {
 
     //image loading library
     implementation(libs.coil)
+    implementation("com.github.dhaval2404:imagepicker:2.1")
 }
