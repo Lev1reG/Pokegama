@@ -166,7 +166,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp">
                 <TextView
-                    android:id="@+id/addfacility_facilityphoto_hint"
+                    android:id="@+id/addfacility_facilityphoto_text"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:paddingTop="18dp"

@@ -1,114 +1,146 @@
 package com.example.pokegama.ui.add
 
-import android.annotation.SuppressLint
-import android.app.Activity.RESULT_OK
+import android.app.Activity
 import android.content.Intent
 import androidx.fragment.app.viewModels
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.pokegama.R
-import com.example.pokegama.data.model.local.Facility
-import com.example.pokegama.data.repo.FacilityRepo
 import com.example.pokegama.databinding.FragmentAddBinding
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.example.pokegama.ui.adapter.DropdownAdapter
+import com.example.pokegama.ui.dialogs.NoInternetDialogFragment
+import com.example.pokegama.util.*
+import dagger.hilt.android.AndroidEntryPoint
+import com.github.dhaval2404.imagepicker.ImagePicker
+import kotlinx.coroutines.launch
 
-class AddFragment : Fragment() {
+@AndroidEntryPoint
+class AddFragment : Fragment(R.layout.fragment_add) {
 
-    companion object {
-        fun newInstance() = AddFragment()
-        val IMAGE_REQUEST_CODE = 100
-    }
-
+    private val binding by viewBinding(FragmentAddBinding::bind)
     private val viewModel: AddViewModel by viewModels()
-    private var _binding: FragmentAddBinding? = null
-    private val binding get() = _binding!!
-    private val db = Firebase.firestore
-    private val facilityRepo = FacilityRepo(db)
-    private lateinit var button: Button
+    private lateinit var startForFacilityImageResult: ActivityResultLauncher<Intent>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // TODO: Use the ViewModel
-    }
-
-    override fun onResume(){
-        super.onResume()
-        val facility_list = resources.getStringArray(R.array.facility_list)
-        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, facility_list)
-        binding.addfacilityFacilityAutoComplete.setAdapter(arrayAdapter)
-
-        val faculty_list = resources.getStringArray(R.array.faculty_list)
-        val facultyArrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, faculty_list)
-        binding.addfacilityFacultyAutoComplete.setAdapter(facultyArrayAdapter)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentAddBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        button = view.findViewById(R.id.addfacility_facilityphoto_button)
-        button.setOnClickListener{
-            pickImageGallery()
+        setupDropdownAdapter()
+
+        binding.addfacilityFacilityAutoComplete.doOnTextChanged{ text, _, _, _ ->
+            viewModel.onTypeChange(text.toString())
         }
 
-        binding.addfacilitySubmit.setOnClickListener{
-            db.collection("facilities").get()
-                .addOnSuccessListener { result ->
-                    for (document in result) {
-                        Log.d("TAG", "${document.id} => ${document.data}")
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Log.w("TAG", "Error getting documents.", exception)
-                }
-            val _facility = binding.addfacilityFacilityAutoComplete.text.toString()
-            val _name = binding.addfacilityNameTextView.text.toString()
-            val _faculty = binding.addfacilityFacultyAutoComplete.text.toString()
-            val _imageUri = binding.addfacilityFacilityphotoHint.text.toString()
-            val _description = binding.addfacilityDescriptionTextView.text.toString()
+        binding.addfacilityNameTextView.doOnTextChanged{ text, _, _, _ ->
+            viewModel.onNameChange(text.toString())
+        }
 
-            val facilityData = Facility(type = _facility, faculty = _faculty, name = _name, imageUri = _imageUri, description = _description)
-            db.collection("facilities").add(facilityData).addOnSuccessListener {
-                binding.addfacilityNameTextView.text.clear()
-                binding.addfacilityFacilityAutoComplete.text.clear()
-                binding.addfacilityFacultyAutoComplete.text.clear()
-                binding.addfacilityFacilityphotoHint.text = "Upload Gambar(JPG, PNG)"
-                binding.addfacilityDescriptionTextView.text.clear()
+        binding.addfacilityFacultyAutoComplete.doOnTextChanged{ text, _, _, _ ->
+            viewModel.onFacultyChange(text.toString())
+        }
 
-                Toast.makeText(this.context, "Saved", Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener{
-                Toast.makeText(this.context, "Failed", Toast.LENGTH_SHORT).show()
+        binding.addfacilityFacilityphotoButton.setOnClickListener {
+            pickImageGallery()
+        }
+        registerImagePickerResult()
+        binding.addfacilityFacilityphotoText.doOnTextChanged{ text, _, _, _ ->
+            viewModel.onFacilityImgChange(text.toString())
+        }
+
+        binding.addfacilityDescriptionTextView.doOnTextChanged{ text, _, _, _ ->
+            viewModel.onDescriptionChange(text.toString())
+        }
+
+        binding.addfacilitySubmit.setOnClickListener {
+            lifecycleScope.launch {
+                val isSuccess = viewModel.onSubmitButtonClicked()
+                if (isSuccess) onSubmitSuccess()
+            }
+        }
+
+        collectUiState()
+        collectUiEvents()
+    }
+
+    private fun collectUiState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect {
+
+                }
             }
         }
     }
 
-    private fun pickImageGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, IMAGE_REQUEST_CODE)
+    private fun collectUiEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.events.collect { event ->
+                    when (event) {
+                        AddScreenEvents.ShowNoInternetDialog -> openNoInternetDialog()
+                        is AddScreenEvents.ShowToast -> {
+                            requireContext().showToast(event.message)
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    override fun onActivityResult(requestCode : Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
-            binding.addfacilityFacilityphotoHint.text = data?.data.toString()
 
+    private fun setupDropdownAdapter(){
+        val facilityList = resources.getStringArray(R.array.facility_list)
+        val facultyList = resources.getStringArray(R.array.faculty_list)
+        DropdownAdapter.setupAdapter(requireContext(), binding.addfacilityFacilityAutoComplete, facilityList, R.layout.dropdown_item)
+        DropdownAdapter.setupAdapter(requireContext(), binding.addfacilityFacultyAutoComplete, facultyList, R.layout.dropdown_item)
+    }
+
+    private fun pickImageGallery() {
+        ImagePicker.with(this)
+            .crop()
+            .compress(1024)
+            .maxResultSize(1080, 1080)
+            .createIntent { intent ->
+                startForFacilityImageResult.launch(intent)
+            }
+    }
+
+    private fun registerImagePickerResult() {
+        startForFacilityImageResult = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result: ActivityResult ->
+            val resultCode = result.resultCode
+            val data = result.data
+
+            if (resultCode == Activity.RESULT_OK) {
+                val fileUri = data?.data
+                if (fileUri != null) {
+                    binding.addfacilityFacilityphotoText.text = fileUri.toString()
+                }
+            } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
 
+    private fun onSubmitSuccess(){
+        binding.addfacilityNameTextView.text.clear()
+        binding.addfacilityFacilityAutoComplete.text.clear()
+        binding.addfacilityFacultyAutoComplete.text.clear()
+        binding.addfacilityFacilityphotoText.text = ""
+        binding.addfacilityDescriptionTextView.text.clear()
+    }
+
+    private fun openNoInternetDialog() {
+        NoInternetDialogFragment().show(parentFragmentManager, OPEN_NO_INTERNET_DIALOG)
     }
 }
