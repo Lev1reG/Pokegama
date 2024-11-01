@@ -40,6 +40,8 @@ class AddViewModel @Inject constructor(
             Log.e("AddViewModel", "Error insert facility: ${resource.message}")
             handleError(resource)
         } else {
+            val event = AddScreenEvents.ShowToast("Fasilitas Diusulkan")
+            _events.emit(event)
             Log.d("AddViewModel", "Facility data inserted successfully")
         }
     }
@@ -82,8 +84,6 @@ class AddViewModel @Inject constructor(
         }
 
         addFacility()
-        val event = AddScreenEvents.ShowToast("Fasilitas Diusulkan")
-        _events.emit(event)
         return true
     }
 

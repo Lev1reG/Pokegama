@@ -42,6 +42,10 @@
                 android:layout_marginTop="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/facility_rv_item" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="250dp" />
         </LinearLayout>
     </ScrollView>
 

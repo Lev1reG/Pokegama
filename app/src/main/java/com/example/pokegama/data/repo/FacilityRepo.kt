@@ -19,6 +19,7 @@ class FacilityRepo @Inject constructor(
     private val facilityItemMapper: FacilityMapper
 ){
     fun getFacility() = facilityDataSource.getFacility()
+    fun getFacilityOfType(facilityType: String) = facilityDataSource.getFacilityOfType(facilityType)
 
     suspend fun fetchFacilityOfType(facilityType: String): Resource<Unit> = withContext(Dispatchers.IO) {
         val resource = firestoreFacilityDataSource.fetchAllFacilitiesOfType(facilityType)
@@ -40,7 +41,7 @@ class FacilityRepo @Inject constructor(
     }
 
     suspend fun fetchFacility(): Resource<Unit> = withContext(Dispatchers.IO) {
-        val resource = firestoreFacilityDataSource.fetchAllFacilities()
+        val resource = firestoreFacilityDataSource.fetchAllAcceptedFacilities()
         return@withContext if (resource is Resource.Success && resource.data != null) {
             dumpAllFacilitiesIntoDB(facilityItemMapper.toEntityList(resource.data!!))
             Resource.Success()

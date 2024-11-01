@@ -12,8 +12,7 @@ class FirestoreFacilityDataSource @Inject constructor(
 ): FacilityDataSource {
     override suspend fun fetchAllFacilities() = try {
         if (internetChecker.hasInternetConnection()) {
-            val users =
-                fireStore.collection(FACILITY_COLLECTION).get().await().toObjects(FacilityDTO::class.java)
+            val users = fireStore.collection(FACILITY_COLLECTION).get().await().toObjects(FacilityDTO::class.java)
             Resource.Success(users)
         } else
             Resource.Error(
@@ -39,12 +38,7 @@ class FirestoreFacilityDataSource @Inject constructor(
 
     override suspend fun fetchAllAcceptedFacilities() = try {
         if (internetChecker.hasInternetConnection()) {
-            val acceptedFacilities = fireStore.collection(FACILITY_COLLECTION)
-                .whereEqualTo("isAccepted", true)
-                .get()
-                .await()
-                .toObjects(FacilityDTO::class.java)
-
+            val acceptedFacilities = fireStore.collection(FACILITY_COLLECTION).whereEqualTo("accepted", true).get().await().toObjects(FacilityDTO::class.java)
             Resource.Success(acceptedFacilities)
         } else {
             Resource.Error(

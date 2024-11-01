@@ -13,36 +13,43 @@ import javax.inject.Inject
 @HiltViewModel
 class FacilitiesViewModel @Inject constructor(
     private val facilityRepo: FacilityRepo
-) : ViewModel(){
+) : ViewModel() {
     private val _uiState = MutableStateFlow(FacilitiesScreenState())
     val uiState = _uiState.asStateFlow()
 
     private val _events = MutableSharedFlow<FacilitiesScreenEvents>()
     val events = _events.asSharedFlow()
 
+    init{
+        viewModelScope.launch {
+            loadFacility()
+            collectFacility()
+        }
+    }
     private fun collectFacility() = viewModelScope.launch {
-        facilityRepo.getFacility().collect { facilities ->
-            Log.d("FacilitiesViewModel", "Facilities collected: $facilities")
-            _uiState.value = _uiState.value.copy(facilityItems = facilities)
+        uiState.value.facilityType?.let {
+            facilityRepo.getFacilityOfType(it).collect { facilities ->
+                Log.d("FacilitiesViewModel", "Facilities collected: $facilities")
+                _uiState.value = _uiState.value.copy(facilityItems = facilities)
+            }
         }
     }
 
-    private suspend fun loadFacility(facilityType: String){
+    private suspend fun loadFacility(){
         Log.d("FacilitiesViewModel", "Fetching facility data...")
-        val resource = facilityRepo.fetchFacilityOfType(facilityType)
+        val resource = facilityRepo.fetchFacility()
         if (resource is Resource.Error) {
             Log.e("FacilitiesViewModel", "Error fetching facilities: ${resource.message}")
             handleError(resource)
         } else {
             Log.d("FacilitiesViewModel", "Facility data fetched successfully")
-            collectFacility()
         }
     }
 
 
     fun setFacilityTypeAndLoad(type: String) {
         viewModelScope.launch {
-            loadFacility(type)
+            _uiState.emit(_uiState.value.copy(facilityType = type))
         }
     }
 
