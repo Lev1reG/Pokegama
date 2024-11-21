@@ -47,6 +47,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        buildConfig = true
         viewBinding = true
         dataBinding = true
     }
@@ -107,4 +108,5 @@ dependencies {
     //image loading library
     implementation(libs.coil)
     implementation("com.github.dhaval2404:imagepicker:2.1")
+    implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
 }
