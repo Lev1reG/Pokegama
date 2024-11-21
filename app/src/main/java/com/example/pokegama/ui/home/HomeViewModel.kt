@@ -1,13 +1,62 @@
 package com.example.pokegama.ui.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.denzcoskun.imageslider.models.SlideModel
+import com.example.pokegama.data.repo.AdvertisementRepo
+import com.example.pokegama.util.ERROR_TYPE
+import com.example.pokegama.util.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val advertisementRepo: AdvertisementRepo
+): ViewModel() {
+    private val _uiState = MutableStateFlow(HomeScreenState())
+    val uiState = _uiState.asStateFlow()
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+    private val _events = MutableSharedFlow<HomeScreenEvents>()
+    val events = _events.asSharedFlow()
+
+    init {
+        viewModelScope.launch {
+            collectAdvertisement()
+        }
     }
-    val text: LiveData<String> = _text
+
+    private fun collectAdvertisement() = viewModelScope.launch {
+        val result = advertisementRepo.getAdvertisement()
+        if (result is Resource.Error) {
+            Log.e("HomeViewModel", "Error fetching facilities: ${result.message}")
+            handleError(result)
+        } else {
+            Log.d("HomeViewModel", "Facility data fetched successfully")
+        }
+        Log.d("HomeViewModel", "Advertisements collected: ${result.data}")
+        result.data?.let { uiState.value.copy(advertisementItems = it) }?.let { _uiState.emit(it) }
+        Log.d("HomeViewModel", "Advertisements emitted: ${uiState.value.advertisementItems}")
+
+        val advertisementsImg = result.data
+            ?.sortedBy { it.id }
+            ?.map { SlideModel(it.advertisementImg) }
+            ?: emptyList()
+        _uiState.value = _uiState.value.copy(imageList = ArrayList(advertisementsImg))
+
+        Log.d("HomeViewModel", "Advertisements emitted: ${_uiState.value.imageList}")
+    }
+
+    private fun handleError(resource: Resource.Error<*>) = viewModelScope.launch {
+        val event = when (resource.errorType) {
+            ERROR_TYPE.NO_INTERNET -> HomeScreenEvents.ShowNoInternetDialog
+            ERROR_TYPE.UNKNOWN -> HomeScreenEvents.ShowToast(resource.message)
+        }
+        _events.emit(event)
+    }
 }
