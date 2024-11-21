@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.interfaces.ItemClickListener
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.pokegama.R
@@ -49,9 +50,32 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         findNavController().navigate(action)
     }
 
+    private fun setSlider(imageList: ArrayList<SlideModel>){
+        if(imageList.isEmpty()){
+            binding.adsImageSlider.setImageList(arrayListOf(SlideModel(R.drawable.ad_error)), ScaleTypes.FIT)
+        }
+        else {
+            binding.adsImageSlider.setImageList(imageList, ScaleTypes.FIT)
+            binding.adsImageSlider.setItemClickListener(object : ItemClickListener {
+                override fun onItemSelected(position: Int) {
+                    selectItem(position)
+                }
+
+                override fun doubleClick(position: Int) {
+                    selectItem(position)
+                }
+            })
+        }
+    }
+
     private fun selectItem(position: Int){
-        val selectedItem = viewModel.uiState.value.imageList[position]
-        Log.d("HomeFragment", "Selected Item: $selectedItem")
+        val url = viewModel.uiState.value.advertisementItems
+            .sortedBy { it.id }
+            .map { it.redirectLink }
+            .getOrNull(position)
+        Log.d("HomeFragment", "URL: $url")
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
     }
 
     private fun collectUiState() {
@@ -60,43 +84,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 viewModel.uiState.collect {
                     imageList = it.imageList
                     Log.d("HomeFragment", "Image List: $imageList")
-                    if(imageList.isEmpty()){
-                        imageList = arrayListOf(SlideModel(R.drawable.ad_error))
-                        binding.adsImageSlider.setImageList(imageList)
-                    }
-                    else {
-                        binding.adsImageSlider.setImageList(imageList)
-                        binding.adsImageSlider.setItemClickListener(object : ItemClickListener {
-                            override fun onItemSelected(position: Int) {
-                                val url = it.advertisementItems
-                                    .sortedBy { it.id }
-                                    .map { it.redirectLink }
-                                    .getOrNull(position)
-                                Log.d("HomeFragment", "URL: $url")
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                                startActivity(intent)
-                            }
-
-                            override fun doubleClick(position: Int) {
-                                val url = it.advertisementItems
-                                    .sortedBy { it.id }
-                                    .map { it.redirectLink }
-                                    .getOrNull(position)
-                                Log.d("HomeFragment", "URL: $url")
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                                startActivity(intent)
-                            }
-                        })
-                    }
+                    setSlider(imageList)
                 }
             }
         }
     }
 
     private fun collectUiEvents() {
+        Log.d("HomeFragment", "Collecting UI events...")
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.events.collect { event ->
+                    Log.d("HomeFragment", "Received UI event: $event")
                     when (event) {
                         HomeScreenEvents.ShowNoInternetDialog -> openNoInternetDialog()
                         is HomeScreenEvents.ShowToast -> {

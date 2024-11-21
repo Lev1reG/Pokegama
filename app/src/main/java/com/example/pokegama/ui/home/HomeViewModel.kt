@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.pokegama.data.repo.AdvertisementRepo
+import com.example.pokegama.ui.add.AddScreenEvents
 import com.example.pokegama.util.ERROR_TYPE
 import com.example.pokegama.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +23,7 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeScreenState())
     val uiState = _uiState.asStateFlow()
 
-    private val _events = MutableSharedFlow<HomeScreenEvents>()
+    private val _events = MutableSharedFlow<HomeScreenEvents>(replay = 1)
     val events = _events.asSharedFlow()
 
     init {
@@ -54,7 +55,7 @@ class HomeViewModel @Inject constructor(
 
     private fun handleError(resource: Resource.Error<*>) = viewModelScope.launch {
         val event = when (resource.errorType) {
-            ERROR_TYPE.NO_INTERNET -> HomeScreenEvents.ShowNoInternetDialog
+            ERROR_TYPE.NO_INTERNET -> HomeScreenEvents.ShowToast(resource.message)
             ERROR_TYPE.UNKNOWN -> HomeScreenEvents.ShowToast(resource.message)
         }
         _events.emit(event)
