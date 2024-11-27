@@ -11,7 +11,7 @@
     <TextView
         android:id="@+id/title_facilities"
         style="@style/title.style"
-        android:text="Fasilitas" />
+        android:text="@string/facilities_title" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="400dp"></androidx.cardview.widget.CardView>
+                android:layout_height="400dp" />
 
             <TextView
                 android:id="@+id/title_location_list"
@@ -33,7 +33,7 @@
                 android:layout_marginTop="24dp"
                 android:fontFamily="@font/poppins_semibold"
                 android:gravity="center"
-                android:text="Daftar Lokasi"
+                android:text="@string/facilities_locations_title"
                 android:textSize="20sp" />
 
             <androidx.recyclerview.widget.RecyclerView

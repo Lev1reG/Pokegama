@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/title_addfacility"
         style="@style/title.style"
-        android:text="@string/title_addfacility"
+        android:text="@string/addfacility_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -191,7 +191,7 @@
                     android:layout_gravity="end"
                     android:layout_marginTop="6dp"
                     android:layout_marginEnd="6dp"
-                    android:text="Upload" />
+                    android:text="@string/addfacility_upload" />
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -263,7 +263,7 @@
                 style="@style/button"
                 android:layout_gravity="center"
                 android:layout_marginTop="24dp"
-                android:text="Ajukan permohonan Fasilitas" />
+                android:text="@string/addfacility_submit" />
 
             <Space
                 android:layout_width="match_parent"
