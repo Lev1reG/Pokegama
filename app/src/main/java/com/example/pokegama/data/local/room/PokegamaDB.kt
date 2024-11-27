@@ -10,5 +10,5 @@ import com.example.pokegama.data.model.local.Facility
     exportSchema = false
 )
 abstract class PokegamaDB : RoomDatabase() {
-    abstract fun getFacilityDao() : FacilityDao
+    abstract fun getFacilityDao(): FacilityDao
 }

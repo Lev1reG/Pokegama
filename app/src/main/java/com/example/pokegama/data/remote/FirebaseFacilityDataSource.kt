@@ -9,10 +9,11 @@ import javax.inject.Inject
 class FirestoreFacilityDataSource @Inject constructor(
     private val fireStore: FirebaseFirestore,
     private val internetChecker: InternetChecker
-): FacilityDataSource {
+) : FacilityDataSource {
     override suspend fun fetchAllFacilities() = try {
         if (internetChecker.hasInternetConnection()) {
-            val users = fireStore.collection(FACILITY_COLLECTION).get().await().toObjects(FacilityDTO::class.java)
+            val users = fireStore.collection(FACILITY_COLLECTION).get().await()
+                .toObjects(FacilityDTO::class.java)
             Resource.Success(users)
         } else
             Resource.Error(
@@ -25,7 +26,8 @@ class FirestoreFacilityDataSource @Inject constructor(
 
     override suspend fun fetchAllFacilitiesOfType(facilityType: String) = try {
         if (internetChecker.hasInternetConnection()) {
-            val users = fireStore.collection(FACILITY_COLLECTION).whereEqualTo("type", facilityType).whereEqualTo("accepted", true).get().await().toObjects(FacilityDTO::class.java)
+            val users = fireStore.collection(FACILITY_COLLECTION).whereEqualTo("type", facilityType)
+                .whereEqualTo("accepted", true).get().await().toObjects(FacilityDTO::class.java)
             Resource.Success(users)
         } else
             Resource.Error(
@@ -38,7 +40,9 @@ class FirestoreFacilityDataSource @Inject constructor(
 
     override suspend fun fetchAllAcceptedFacilities() = try {
         if (internetChecker.hasInternetConnection()) {
-            val acceptedFacilities = fireStore.collection(FACILITY_COLLECTION).whereEqualTo("accepted", true).get().await().toObjects(FacilityDTO::class.java)
+            val acceptedFacilities =
+                fireStore.collection(FACILITY_COLLECTION).whereEqualTo("accepted", true).get()
+                    .await().toObjects(FacilityDTO::class.java)
             Resource.Success(acceptedFacilities)
         } else {
             Resource.Error(

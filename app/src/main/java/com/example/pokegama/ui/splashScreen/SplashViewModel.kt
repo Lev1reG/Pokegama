@@ -11,11 +11,10 @@ class SplashViewModel : ViewModel() {
     private val _isReady = MutableStateFlow(false)
     val isReady = _isReady.asStateFlow()
 
-    init{
-        viewModelScope.launch{
+    init {
+        viewModelScope.launch {
             delay(2000)
             _isReady.value = true
         }
-
     }
 }

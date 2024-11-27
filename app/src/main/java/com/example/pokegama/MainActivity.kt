@@ -23,8 +23,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen().apply{
-            setKeepOnScreenCondition{
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
                 !viewModel.isReady.value
             }
         }
@@ -44,18 +44,22 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.navigation_home)
                     true
                 }
+
                 R.id.navigation_add -> {
                     navController.navigate(R.id.navigation_add)
                     true
                 }
+
                 R.id.navigation_about -> {
                     navController.navigate(R.id.navigation_about)
                     true
                 }
+
                 R.id.navigation_facilities -> {
                     navController.navigate(R.id.navigation_facilities)
                     true
                 }
+
                 else -> false
             }
         }

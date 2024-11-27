@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class AdvertisementRepo @Inject constructor(
     private val firestoreAdvertisementDataSource: FirestoreAdvertisementDataSource,
-){
+) {
     suspend fun getAdvertisement() = firestoreAdvertisementDataSource.fetchAllAdvertisement()
 
 }

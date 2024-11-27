@@ -9,10 +9,11 @@ import javax.inject.Inject
 class FirestoreAdvertisementDataSource @Inject constructor(
     private val fireStore: FirebaseFirestore,
     private val internetChecker: InternetChecker
-): AdvertisementDataSource {
+) : AdvertisementDataSource {
     override suspend fun fetchAllAdvertisement() = try {
         if (internetChecker.hasInternetConnection()) {
-            val advertisements = fireStore.collection(ADVERTISEMENT_COLLECTION).get().await().toObjects(AdvertisementDTO::class.java)
+            val advertisements = fireStore.collection(ADVERTISEMENT_COLLECTION).get().await()
+                .toObjects(AdvertisementDTO::class.java)
             Resource.Success(advertisements)
         } else
             Resource.Error(

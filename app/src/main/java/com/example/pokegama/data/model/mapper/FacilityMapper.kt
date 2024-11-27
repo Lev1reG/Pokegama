@@ -3,7 +3,7 @@ package com.example.pokegama.data.model.mapper
 import com.example.pokegama.data.model.local.Facility
 import com.example.pokegama.data.model.remote.FacilityDTO
 
-class FacilityMapper : Mapper<Facility, FacilityDTO>{
+class FacilityMapper : Mapper<Facility, FacilityDTO> {
     override fun toEntity(dto: FacilityDTO): Facility {
         return Facility(
             type = dto.type,
@@ -20,7 +20,7 @@ class FacilityMapper : Mapper<Facility, FacilityDTO>{
         return dtos.map { toEntity(it) }
     }
 
-    override fun toDTO(entity: Facility): FacilityDTO{
+    override fun toDTO(entity: Facility): FacilityDTO {
         return FacilityDTO(
             type = entity.type,
             name = entity.name,

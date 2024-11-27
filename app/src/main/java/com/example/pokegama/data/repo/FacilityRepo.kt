@@ -17,35 +17,37 @@ class FacilityRepo @Inject constructor(
     private val facilityDataSource: RoomFacilityDataSource,
     private val firestoreFacilityDataSource: FirestoreFacilityDataSource,
     private val facilityItemMapper: FacilityMapper
-){
+) {
     fun getFacility() = facilityDataSource.getFacility()
     fun getFacilityOfType(facilityType: String) = facilityDataSource.getFacilityOfType(facilityType)
 
-    suspend fun fetchFacilityOfType(facilityType: String): Resource<Unit> = withContext(Dispatchers.IO) {
-        val resource = firestoreFacilityDataSource.fetchAllFacilitiesOfType(facilityType)
-        return@withContext if (resource is Resource.Success && resource.data != null) {
-            dumpAllFacilitiesIntoDB(facilityItemMapper.toEntityList(resource.data!!))
-            Resource.Success()
-        } else{
-            Resource.Error(errorType = resource.errorType, message = "Cannot load facility")
+    suspend fun fetchFacilityOfType(facilityType: String): Resource<Unit> =
+        withContext(Dispatchers.IO) {
+            val resource = firestoreFacilityDataSource.fetchAllFacilitiesOfType(facilityType)
+            return@withContext if (resource is Resource.Success && resource.data != null) {
+                dumpAllFacilitiesIntoDB(facilityItemMapper.toEntityList(resource.data!!))
+                Resource.Success()
+            } else {
+                Resource.Error(errorType = resource.errorType, message = "Cannot load facility")
+            }
         }
-    }
 
-    suspend fun insertFacilityToDatabase(facilityDTO: FacilityDTO): Resource<Unit> = withContext(Dispatchers.IO) {
-        val resource = firestoreFacilityDataSource.addFacility(facilityDTO)
-        return@withContext if (resource is Resource.Success) {
-            Resource.Success()
-        } else{
-            Resource.Error(errorType = resource.errorType, message = "Cannot insert facility")
+    suspend fun insertFacilityToDatabase(facilityDTO: FacilityDTO): Resource<Unit> =
+        withContext(Dispatchers.IO) {
+            val resource = firestoreFacilityDataSource.addFacility(facilityDTO)
+            return@withContext if (resource is Resource.Success) {
+                Resource.Success()
+            } else {
+                Resource.Error(errorType = resource.errorType, message = "Cannot insert facility")
+            }
         }
-    }
 
     suspend fun fetchFacility(): Resource<Unit> = withContext(Dispatchers.IO) {
         val resource = firestoreFacilityDataSource.fetchAllAcceptedFacilities()
         return@withContext if (resource is Resource.Success && resource.data != null) {
             dumpAllFacilitiesIntoDB(facilityItemMapper.toEntityList(resource.data!!))
             Resource.Success()
-        } else{
+        } else {
             Resource.Error(errorType = resource.errorType, message = "Cannot load facility")
         }
     }

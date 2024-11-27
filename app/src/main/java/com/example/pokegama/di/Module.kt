@@ -40,5 +40,6 @@ object Module {
     fun providesFacilityMapper(): FacilityMapper = FacilityMapper()
 
     @Provides
-    fun providesInternetChecker(@ApplicationContext context: Context): InternetChecker = InternetChecker(context)
+    fun providesInternetChecker(@ApplicationContext context: Context): InternetChecker =
+        InternetChecker(context)
 }

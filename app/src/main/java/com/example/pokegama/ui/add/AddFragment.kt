@@ -46,15 +46,15 @@ class AddFragment : Fragment(R.layout.fragment_add) {
         setupDropdownAdapter()
         setupCloudinary()
 
-        binding.addfacilityFacilityAutoComplete.doOnTextChanged{ text, _, _, _ ->
+        binding.addfacilityFacilityAutoComplete.doOnTextChanged { text, _, _, _ ->
             viewModel.onTypeChange(text.toString())
         }
 
-        binding.addfacilityNameTextView.doOnTextChanged{ text, _, _, _ ->
+        binding.addfacilityNameTextView.doOnTextChanged { text, _, _, _ ->
             viewModel.onNameChange(text.toString())
         }
 
-        binding.addfacilityFacultyAutoComplete.doOnTextChanged{ text, _, _, _ ->
+        binding.addfacilityFacultyAutoComplete.doOnTextChanged { text, _, _, _ ->
             viewModel.onFacultyChange(text.toString())
         }
 
@@ -64,7 +64,7 @@ class AddFragment : Fragment(R.layout.fragment_add) {
 
         registerImagePickerResult()
 
-        binding.addfacilityDescriptionTextView.doOnTextChanged{ text, _, _, _ ->
+        binding.addfacilityDescriptionTextView.doOnTextChanged { text, _, _, _ ->
             viewModel.onDescriptionChange(text.toString())
         }
 
@@ -101,7 +101,7 @@ class AddFragment : Fragment(R.layout.fragment_add) {
         }
     }
 
-    private fun setupCloudinary(){
+    private fun setupCloudinary() {
         val config = mapOf(
             "cloud_name" to BuildConfig.CLOUDINARY_NAME,
             "api_key" to BuildConfig.CLOUDINARY_API_KEY,
@@ -118,7 +118,8 @@ class AddFragment : Fragment(R.layout.fragment_add) {
         return withContext(Dispatchers.IO) {
             try {
                 val inputStream = requireContext().contentResolver.openInputStream(fileUri)
-                val uploadResult = cloudinary.uploader().upload(inputStream, ObjectUtils.asMap("public_id", publicId))
+                val uploadResult = cloudinary.uploader()
+                    .upload(inputStream, ObjectUtils.asMap("public_id", publicId))
                 val imageUrl = uploadResult["url"] as String
                 viewModel.setFacilityImg(imageUrl)
                 true
@@ -130,11 +131,21 @@ class AddFragment : Fragment(R.layout.fragment_add) {
     }
 
 
-    private fun setupDropdownAdapter(){
+    private fun setupDropdownAdapter() {
         val facilityList = resources.getStringArray(R.array.facility_list)
         val facultyList = resources.getStringArray(R.array.faculty_list)
-        DropdownAdapter.setupAdapter(requireContext(), binding.addfacilityFacilityAutoComplete, facilityList, R.layout.dropdown_item)
-        DropdownAdapter.setupAdapter(requireContext(), binding.addfacilityFacultyAutoComplete, facultyList, R.layout.dropdown_item)
+        DropdownAdapter.setupAdapter(
+            requireContext(),
+            binding.addfacilityFacilityAutoComplete,
+            facilityList,
+            R.layout.dropdown_item
+        )
+        DropdownAdapter.setupAdapter(
+            requireContext(),
+            binding.addfacilityFacultyAutoComplete,
+            facultyList,
+            R.layout.dropdown_item
+        )
     }
 
     private fun pickImageGallery() {
@@ -162,18 +173,20 @@ class AddFragment : Fragment(R.layout.fragment_add) {
                             it
                         )
                     }
-                    binding.addfacilityFacilityphotoText.text = viewModel.uiState.value.facilityImgName
+                    binding.addfacilityFacilityphotoText.text =
+                        viewModel.uiState.value.facilityImgName
                     viewModel.setFileUri(fileUri)
                 }
             } else if (resultCode == ImagePicker.RESULT_ERROR) {
-                Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun onSubmit(){
+    private fun onSubmit() {
         lifecycleScope.launch {
             val fieldChecks = listOf(
                 viewModel.uiState.value.type to "Masukkan jenis fasilitas",
@@ -205,7 +218,7 @@ class AddFragment : Fragment(R.layout.fragment_add) {
         }
     }
 
-    private fun onSubmitSuccess(){
+    private fun onSubmitSuccess() {
         binding.addfacilityNameTextView.text.clear()
         binding.addfacilityFacilityAutoComplete.text.clear()
         binding.addfacilityFacultyAutoComplete.text.clear()

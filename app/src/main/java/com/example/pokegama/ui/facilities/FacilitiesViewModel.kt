@@ -20,12 +20,13 @@ class FacilitiesViewModel @Inject constructor(
     private val _events = MutableSharedFlow<FacilitiesScreenEvents>()
     val events = _events.asSharedFlow()
 
-    init{
+    init {
         viewModelScope.launch {
             loadFacility()
             collectFacility()
         }
     }
+
     private fun collectFacility() = viewModelScope.launch {
         uiState.value.facilityType?.let {
             facilityRepo.getFacilityOfType(it).collect { facilities ->
@@ -35,7 +36,7 @@ class FacilitiesViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadFacility(){
+    private suspend fun loadFacility() {
         Log.d("FacilitiesViewModel", "Fetching facility data...")
         val resource = facilityRepo.fetchFacility()
         if (resource is Resource.Error) {

@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddViewModel @Inject constructor(
     private val facilityRepo: FacilityRepo
-): ViewModel() {
+) : ViewModel() {
     private val _uiState = MutableStateFlow(AddScreenState())
     val uiState: StateFlow<AddScreenState> = _uiState
 

@@ -50,11 +50,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         findNavController().navigate(action)
     }
 
-    private fun setSlider(imageList: ArrayList<SlideModel>){
-        if(imageList.isEmpty()){
-            binding.adsImageSlider.setImageList(arrayListOf(SlideModel(R.drawable.ad_error)), ScaleTypes.FIT)
-        }
-        else {
+    private fun setSlider(imageList: ArrayList<SlideModel>) {
+        if (imageList.isEmpty()) {
+            binding.adsImageSlider.setImageList(
+                arrayListOf(SlideModel(R.drawable.ad_error)),
+                ScaleTypes.FIT
+            )
+        } else {
             binding.adsImageSlider.setImageList(imageList, ScaleTypes.FIT)
             binding.adsImageSlider.setItemClickListener(object : ItemClickListener {
                 override fun onItemSelected(position: Int) {
@@ -68,7 +70,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun selectItem(position: Int){
+    private fun selectItem(position: Int) {
         val url = viewModel.uiState.value.advertisementItems
             .sortedBy { it.id }
             .map { it.redirectLink }
