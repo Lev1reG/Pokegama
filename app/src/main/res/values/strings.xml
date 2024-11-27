@@ -60,6 +60,10 @@
     <string name="addfacility_description_hint">Contoh : Depan masjid kampus</string>
     <string name="addfacility_upload">Upload</string>
     <string name="addfacility_submit">Ajukan permohonan Fasilitas</string>
+    <string name="home_pokegama_icon">Pokegama Icon</string>
+    <string name="home_toyagama_content_description">Toyagama</string>
+    <string name="home_bus_ugm_content_description">Bus UGM</string>
+    <string name="home_sepeda_kampus_content_description">Sepeda Kampus</string>
 
     <!--About-->
 
