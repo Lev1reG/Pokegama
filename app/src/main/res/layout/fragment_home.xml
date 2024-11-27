@@ -18,45 +18,48 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/purple_400">
+            android:background="@color/purple_400"
+            android:orientation="vertical">
             <!-- Title -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingTop="40dp"
-                android:paddingEnd="20dp"
                 android:layout_gravity="center_horizontal"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingTop="40dp"
+                android:paddingEnd="20dp">
+
                 <ImageView
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
+                    android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
-                    android:layout_gravity="center"
                     android:src="@drawable/icon_pokegama" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="Pokegama"
                     android:layout_marginStart="-20dp"
+                    android:fontFamily="@font/poppins_bold"
                     android:gravity="center_vertical"
+                    android:text="Pokegama"
                     android:textColor="@color/yellow_500"
                     android:textSize="36sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </LinearLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:layout_marginTop="-22dp"
+                android:layout_marginBottom="22dp"
                 android:fontFamily="@font/poppins_bold"
                 android:text="Gadjah Mada in your pocket"
                 android:textColor="@color/white"
-                android:layout_marginTop="-22dp"
-                android:layout_marginBottom="22dp"
                 android:textSize="20sp"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -72,8 +75,8 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
                     android:layout_gravity="center"
+                    android:layout_marginTop="40dp"
                     android:elevation="10dp"
                     app:cardCornerRadius="16dp">
 
@@ -91,40 +94,42 @@
                 </androidx.cardview.widget.CardView>
 
 
-
-            <TextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="5dp"
                     android:fontFamily="@font/poppins_semibold"
                     android:text="Fasilitas UGM"
                     android:textColor="@color/black"
                     android:textSize="20sp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="5dp"
                     app:layout_constraintTop_toTopOf="parent" />
+
                 <ImageButton
                     android:id="@+id/buttonNavigateToyagama"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
-                    android:src="@drawable/toyagama"
+                    android:padding="0dp"
                     android:scaleType="fitXY"
-                    android:padding="0dp"/>
+                    android:src="@drawable/toyagama" />
+
                 <ImageButton
                     android:id="@+id/buttonNavigateBusUGM"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
-                    android:src="@drawable/bus_ugm"
-                    android:scaleType="fitXY"
+                    android:layout_marginTop="18dp"
                     android:padding="0dp"
-                    android:layout_marginTop="18dp"/>
+                    android:scaleType="fitXY"
+                    android:src="@drawable/bus_ugm" />
+
                 <ImageButton
                     android:id="@+id/buttonNavigateSepeda"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
-                    android:src="@drawable/sepeda_kampus"
-                    android:scaleType="fitXY"
+                    android:layout_marginTop="18dp"
                     android:padding="0dp"
-                    android:layout_marginTop="18dp"/>
+                    android:scaleType="fitXY"
+                    android:src="@drawable/sepeda_kampus" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
