@@ -38,7 +38,9 @@ class FacilitiesViewModel @Inject constructor(
 
     private suspend fun loadFacility() {
         Log.d("FacilitiesViewModel", "Fetching facility data...")
+        _uiState.emit(_uiState.value.copy(isLoading = true))
         val resource = facilityRepo.fetchFacility()
+        _uiState.emit(_uiState.value.copy(isLoading = false))
         if (resource is Resource.Error) {
             Log.e("FacilitiesViewModel", "Error fetching facilities: ${resource.message}")
             handleError(resource)

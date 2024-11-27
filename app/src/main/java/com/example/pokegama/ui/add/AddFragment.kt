@@ -12,13 +12,11 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.cloudinary.Cloudinary
-import com.cloudinary.utils.ObjectUtils
-import com.example.pokegama.BuildConfig
 import com.example.pokegama.R
 import com.example.pokegama.databinding.FragmentAddBinding
 import com.example.pokegama.ui.adapter.DropdownAdapter
@@ -26,12 +24,7 @@ import com.example.pokegama.ui.dialogs.NoInternetDialogFragment
 import com.example.pokegama.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import com.github.dhaval2404.imagepicker.ImagePicker
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @AndroidEntryPoint
 class AddFragment : Fragment(R.layout.fragment_add) {
@@ -39,12 +32,10 @@ class AddFragment : Fragment(R.layout.fragment_add) {
     private val binding by viewBinding(FragmentAddBinding::bind)
     private val viewModel: AddViewModel by viewModels()
     private lateinit var startForFacilityImageResult: ActivityResultLauncher<Intent>
-    private var cloudinary = Cloudinary()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupDropdownAdapter()
-        setupCloudinary()
 
         binding.addfacilityFacilityAutoComplete.doOnTextChanged { text, _, _, _ ->
             viewModel.onTypeChange(text.toString())
@@ -80,7 +71,7 @@ class AddFragment : Fragment(R.layout.fragment_add) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect {
-
+                    binding.loadingLayout.loadingLayout.isVisible = it.isLoading
                 }
             }
         }
@@ -100,36 +91,6 @@ class AddFragment : Fragment(R.layout.fragment_add) {
             }
         }
     }
-
-    private fun setupCloudinary() {
-        val config = mapOf(
-            "cloud_name" to BuildConfig.CLOUDINARY_NAME,
-            "api_key" to BuildConfig.CLOUDINARY_API_KEY,
-            "api_secret" to BuildConfig.CLOUDINARY_API_SECRET
-        )
-        cloudinary = Cloudinary(config)
-    }
-
-    private suspend fun uploadImageToCloudinary(fileUri: Uri): Boolean {
-        val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
-        val dateNow = dateFormat.format(Date())
-        val publicId = "${viewModel.uiState.value.type}_${viewModel.uiState.value.name}_$dateNow"
-
-        return withContext(Dispatchers.IO) {
-            try {
-                val inputStream = requireContext().contentResolver.openInputStream(fileUri)
-                val uploadResult = cloudinary.uploader()
-                    .upload(inputStream, ObjectUtils.asMap("public_id", publicId))
-                val imageUrl = uploadResult["url"] as String
-                viewModel.setFacilityImg(imageUrl)
-                true
-            } catch (e: Exception) {
-                e.printStackTrace()
-                false
-            }
-        }
-    }
-
 
     private fun setupDropdownAdapter() {
         val facilityList = resources.getStringArray(R.array.facility_list)
@@ -204,7 +165,7 @@ class AddFragment : Fragment(R.layout.fragment_add) {
             }
 
             val uploadSuccess = viewModel.uiState.value.fileUri?.let { fileUri ->
-                uploadImageToCloudinary(fileUri)
+                viewModel.uploadImageToCloudinary(requireContext().contentResolver, fileUri)
             } ?: false
 
             if (!uploadSuccess) {

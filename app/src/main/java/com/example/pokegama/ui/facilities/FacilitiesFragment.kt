@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import com.example.pokegama.R
@@ -34,6 +35,7 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect {
+                    binding.loadingLayout.loadingLayout.isVisible = it.isLoading
                     facilityAdapter.submitList(it.facilityItems)
                 }
             }

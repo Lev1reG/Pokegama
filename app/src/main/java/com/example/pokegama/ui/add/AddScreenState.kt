@@ -3,6 +3,7 @@ package com.example.pokegama.ui.add
 import android.net.Uri
 
 data class AddScreenState(
+    val isLoading: Boolean = false,
     val type: String = "",
     val name: String = "",
     val facilityImg: String = "",

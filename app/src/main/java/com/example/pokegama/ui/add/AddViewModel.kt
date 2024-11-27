@@ -1,18 +1,27 @@
 package com.example.pokegama.ui.add
 
+import android.content.ContentResolver
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cloudinary.Cloudinary
+import com.cloudinary.utils.ObjectUtils
+import com.example.pokegama.BuildConfig
 import com.example.pokegama.data.model.remote.FacilityDTO
 import com.example.pokegama.data.repo.FacilityRepo
 import com.example.pokegama.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +34,42 @@ class AddViewModel @Inject constructor(
     private val _events = MutableSharedFlow<AddScreenEvents>()
     val events = _events.asSharedFlow()
 
+    private lateinit var cloudinary: Cloudinary
+
+    private fun setupCloudinary() {
+        val config = mapOf(
+            "cloud_name" to BuildConfig.CLOUDINARY_NAME,
+            "api_key" to BuildConfig.CLOUDINARY_API_KEY,
+            "api_secret" to BuildConfig.CLOUDINARY_API_SECRET
+        )
+        cloudinary = Cloudinary(config)
+    }
+
+    suspend fun uploadImageToCloudinary(contentResolver: ContentResolver, fileUri: Uri): Boolean {
+        setupCloudinary()
+        val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+        val dateNow = dateFormat.format(Date())
+        val publicId = "${_uiState.value.type}_${_uiState.value.name}_$dateNow"
+
+        return withContext(Dispatchers.IO) {
+            try {
+                val inputStream = contentResolver.openInputStream(fileUri)
+                _uiState.emit(_uiState.value.copy(isLoading = true))
+                val uploadResult = cloudinary.uploader()
+                    .upload(inputStream, ObjectUtils.asMap("public_id", publicId))
+                _uiState.emit(_uiState.value.copy(isLoading = false))
+                val imageUrl = uploadResult["url"] as String
+                setFacilityImg(imageUrl)
+                true
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
+    }
+
     fun addFacility() = viewModelScope.launch {
+        _uiState.emit(_uiState.value.copy(isLoading = true))
         val facility = FacilityDTO(
             type = _uiState.value.type,
             name = _uiState.value.name,
@@ -37,6 +81,7 @@ class AddViewModel @Inject constructor(
             isAccepted = _uiState.value.isAccepted
         )
         val resource = facilityRepo.insertFacilityToDatabase(facility)
+        _uiState.emit(_uiState.value.copy(isLoading = false))
         if (resource is Resource.Error) {
             Log.e("AddViewModel", "Error insert facility: ${resource.message}")
             handleError(resource)
