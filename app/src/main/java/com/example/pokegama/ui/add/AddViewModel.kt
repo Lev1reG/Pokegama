@@ -1,5 +1,6 @@
 package com.example.pokegama.ui.add
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,7 +25,7 @@ class AddViewModel @Inject constructor(
     private val _events = MutableSharedFlow<AddScreenEvents>()
     val events = _events.asSharedFlow()
 
-    private fun addFacility() = viewModelScope.launch {
+    fun addFacility() = viewModelScope.launch {
         val facility = FacilityDTO(
             type = _uiState.value.type,
             name = _uiState.value.name,
@@ -46,6 +47,11 @@ class AddViewModel @Inject constructor(
         }
     }
 
+    fun emitMessage(message: String) = viewModelScope.launch {
+        val event = AddScreenEvents.ShowToast(message)
+        _events.emit(event)
+    }
+
     fun onTypeChange(type: String) = viewModelScope.launch {
         _uiState.emit(_uiState.value.copy(type = type))
     }
@@ -58,36 +64,21 @@ class AddViewModel @Inject constructor(
         _uiState.emit(_uiState.value.copy(faculty = faculty))
     }
 
-    fun onFacilityImgChange(facilityImg: String) = viewModelScope.launch {
-        _uiState.emit(_uiState.value.copy(facilityImg = facilityImg))
-    }
-
     fun onDescriptionChange(description: String) = viewModelScope.launch {
         _uiState.emit(_uiState.value.copy(description = description))
     }
 
-    suspend fun onSubmitButtonClicked(): Boolean {
-        val fieldChecks = listOf(
-            _uiState.value.type to "Masukkan jenis fasilitas",
-            _uiState.value.name to "Masukkan nama tempat fasilitas",
-            _uiState.value.faculty to "Masukkan fakultas tempat fasilitas",
-            _uiState.value.facilityImg to "Masukkan gambar fasilitas",
-            _uiState.value.description to "Masukkan deskripsi fasilitas"
-        )
-
-        for ((value, message) in fieldChecks) {
-            if (value.isEmpty()) {
-                val event = AddScreenEvents.ShowToast(message)
-                _events.emit(event)
-                return false
-            }
-        }
-
-        addFacility()
-        return true
+    fun setFileUri(fileUri: Uri) = viewModelScope.launch {
+        _uiState.emit(_uiState.value.copy(fileUri = fileUri))
     }
 
+    fun setFacilityImg(facilityImg: String) = viewModelScope.launch {
+        _uiState.emit(_uiState.value.copy(facilityImg = facilityImg))
+    }
 
+    fun setFacilityImgName(facilityImgName: String) = viewModelScope.launch {
+        _uiState.emit(_uiState.value.copy(facilityImgName = facilityImgName))
+    }
 
     private fun handleError(resource: Resource.Error<Unit>) = viewModelScope.launch {
         val event = when (resource.errorType) {
