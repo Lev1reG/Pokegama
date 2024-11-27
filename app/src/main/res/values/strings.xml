@@ -23,17 +23,17 @@
     <string name="addfacility_title_faculty">Fakultas </string>
     <string name="addfacility_faculty_hint">Pilih fakultas</string>
     <string-array name="faculty_list">
-        <item>FHUT</item>
-        <item>FKKMK</item>
+        <item>FKT</item>
+        <item>FK</item>
         <item>FKH</item>
         <item>FKG</item>
-        <item>FISIPOL</item>
+        <item>SP</item>
         <item>FIB</item>
         <item>FH</item>
-        <item>FMIPA</item>
-        <item>FAPET</item>
-        <item>FAPERTA</item>
-        <item>FPSI</item>
+        <item>PA</item>
+        <item>PET</item>
+        <item>FPT</item>
+        <item>PSI</item>
         <item>FT</item>
         <item>FTP</item>
         <item>GEO</item>

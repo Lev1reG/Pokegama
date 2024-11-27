@@ -134,7 +134,7 @@
                 <AutoCompleteTextView
                     android:id="@+id/addfacility_facultyAutoComplete"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingStart="24dp"
                     android:paddingEnd="24dp"
@@ -143,6 +143,8 @@
                     android:hint="@string/addfacility_faculty_hint"
                     android:fontFamily="@font/poppins_regular"
                     android:textSize="16sp"
+                    android:singleLine="false"
+                    android:scrollHorizontally="true"
                     android:textColor="@color/black"/>
             </com.google.android.material.textfield.TextInputLayout>
 
