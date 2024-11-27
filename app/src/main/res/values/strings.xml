@@ -64,6 +64,18 @@
     <string name="home_toyagama_content_description">Toyagama</string>
     <string name="home_bus_ugm_content_description">Bus UGM</string>
     <string name="home_sepeda_kampus_content_description">Sepeda Kampus</string>
+    <string name="about_app_title">About App</string>
+    <string name="about_app_description">Pokegama, singkatan dari kata “Pocket Gadjah Mada”, merupakan aplikasi tracker fasilitas yang terdapat di Universitas Gadjah Mada dengan slogan “Gadjah Mada in your pocket”.</string>
+    <string name="about_app_logo_description">Logo Pokegama merupakan sebuah monogram dari “UGM”, yang membentuk sebuah simbol menyerupai kantong yang membuka yang berisi pinpoint.</string>
+    <string name="about_us_title">About Us</string>
+    <string name="about_us_description">Aplikasi ini dibuat oleh Tim 01 Pengembangan Aplikasi Piranti Bergerak 2024, yaitu Daniel Anantadhirya Adyawisesa Linan, Deren Tanaphan, dan Rama Sulaiman Nurcahyo.</string>
+    <string name="foto_nanta">foto nanta</string>
+    <string name="foto_deren">foto deren</string>
+    <string name="foto_rama">foto rama</string>
+    <string name="contact_us">Kontak Kami</string>
+    <string name="whatsapp">Whatsapp: +62-811-1458-3378</string>
+    <string name="instagram">Instagram: @poketto.gama</string>
+    <string name="twitter">X: @poketto.gama</string>
 
     <!--About-->
 

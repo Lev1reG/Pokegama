@@ -7,28 +7,157 @@
     tools:context=".ui.about.AboutFragment">
 
     <ScrollView
-        android:id="@+id/scroll_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Add an ImageView inside the LinearLayout -->
-            <ImageView
+            <TextView
+                android:id="@+id/about_app_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/about_app_title"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:textColor="@color/blue_500"
+                android:fontFamily="@font/poppins_bold"
+                android:paddingBottom="16dp" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:contentDescription=""
-                android:src="@drawable/about" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingBottom="16dp">
 
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_pokegama"
+                    android:contentDescription="@string/home_pokegama_icon"/>
+
+                <TextView
+                    android:id="@+id/pokegama_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="-20dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center_vertical"
+                    android:text="@string/home_title"
+                    android:textColor="@color/yellow_500"
+                    android:textSize="36sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/about_app_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/about_app_description"
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:paddingBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/about_app_logo_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/about_app_logo_description"
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:paddingBottom="16dp"/>
+            
+            <TextView
+                android:id="@+id/about_us_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/about_us_title"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="36sp"
+                android:textColor="@color/blue_500"
+                android:paddingBottom="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/about_us_description"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:paddingBottom="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingBottom="16dp">
+
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@drawable/nanta"
+                    android:contentDescription="@string/foto_nanta"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@drawable/deren"
+                    android:contentDescription="@string/foto_deren"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:contentDescription="@string/foto_rama"
+                    android:src="@drawable/rama" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/contact_us_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contact_us"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/contact_us_whatsapp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/whatsapp"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/contact_us_instagram"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/instagram"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/contact_us_x"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/twitter"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
         </LinearLayout>
 
     </ScrollView>
