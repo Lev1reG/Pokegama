@@ -105,6 +105,9 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
+    //Mapbox
+    implementation("com.mapbox.maps:android:11.8.0")
+
     //image loading library
     implementation(libs.coil)
     implementation("com.github.dhaval2404:imagepicker:2.1")

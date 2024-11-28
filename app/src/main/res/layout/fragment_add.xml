@@ -207,19 +207,16 @@
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/mapView"
+            <FrameLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/stroke_outer"
-                android:paddingStart="24dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="24dp"
-                android:textColor="@color/black"
-                tools:context=".MapsActivity"
-                tools:layout_editor_absoluteX="83dp"
-                tools:layout_editor_absoluteY="590dp" />
+                android:layout_height="300dp">
+
+                <com.mapbox.maps.MapView
+                    android:id="@+id/mapView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/addfacility_title_description"

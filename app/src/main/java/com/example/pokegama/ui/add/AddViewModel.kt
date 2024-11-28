@@ -125,6 +125,14 @@ class AddViewModel @Inject constructor(
         _uiState.emit(_uiState.value.copy(facilityImgName = facilityImgName))
     }
 
+    fun setLatitude(latitude: Double) = viewModelScope.launch {
+        _uiState.emit(_uiState.value.copy(latitude = latitude))
+    }
+
+    fun setLongitude(longitude: Double) = viewModelScope.launch {
+        _uiState.emit(_uiState.value.copy(longitude = longitude))
+    }
+
     private fun handleError(resource: Resource.Error<Unit>) = viewModelScope.launch {
         val event = when (resource.errorType) {
             ERROR_TYPE.NO_INTERNET -> AddScreenEvents.ShowNoInternetDialog

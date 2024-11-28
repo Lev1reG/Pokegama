@@ -2,6 +2,7 @@ package com.example.pokegama.ui.add
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.fragment.app.viewModels
 import android.os.Bundle
@@ -24,10 +25,23 @@ import com.example.pokegama.ui.dialogs.NoInternetDialogFragment
 import com.example.pokegama.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraBoundsOptions
 import kotlinx.coroutines.launch
+import com.mapbox.maps.MapView
+import com.mapbox.maps.Style
+import com.mapbox.maps.extension.style.style
+import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.CoordinateBounds
 
 @AndroidEntryPoint
 class AddFragment : Fragment(R.layout.fragment_add) {
+
+    private lateinit var pointAnnotationManager: PointAnnotationManager
 
     private val binding by viewBinding(FragmentAddBinding::bind)
     private val viewModel: AddViewModel by viewModels()
@@ -36,6 +50,44 @@ class AddFragment : Fragment(R.layout.fragment_add) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupDropdownAdapter()
+
+        binding.mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS) { style ->
+            // Set a default camera position (zoom in on UGM)
+            binding.mapView.getMapboxMap().setCamera(
+                com.mapbox.maps.CameraOptions.Builder()
+                    .center(Point.fromLngLat(110.37762, -7.77083))
+                    .zoom(14.0)
+                    .build()
+            )
+
+            val bitmap = BitmapFactory.decodeResource(resources, R.drawable.red_pin)
+            style.addImage("red-pin-icon-id", bitmap)
+            // Create PointAnnotationManager once the style is loaded
+            pointAnnotationManager = binding.mapView.annotations.createPointAnnotationManager()
+
+
+            // Add a click listener to get the latitude and longitude when the map is clicked
+            binding.mapView.getMapboxMap().addOnMapClickListener { point ->
+                val latitude = point.latitude()
+                val longitude = point.longitude()
+
+                // Clear existing markers if needed
+                pointAnnotationManager.deleteAll()
+
+                val pointAnnotationOptions = PointAnnotationOptions()
+                    .withPoint(Point.fromLngLat(longitude, latitude))
+                    .withIconImage("red-pin-icon-id")
+
+                pointAnnotationManager.create(pointAnnotationOptions)
+
+                viewModel.setLatitude(latitude)
+                viewModel.setLongitude(longitude)
+
+                viewModel.emitMessage("Lat: ${viewModel.uiState.value.latitude}, Lng: ${viewModel.uiState.value.longitude}")
+
+                true
+            }
+        }
 
         binding.addfacilityFacilityAutoComplete.doOnTextChanged { text, _, _, _ ->
             viewModel.onTypeChange(text.toString())
