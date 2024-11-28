@@ -33,7 +33,20 @@
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="400dp" />
+                    android:layout_height="400dp">
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="380dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp">
+
+                        <com.mapbox.maps.MapView
+                            android:id="@+id/mapView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </FrameLayout>
+                </androidx.cardview.widget.CardView>
 
                 <TextView
                     android:id="@+id/title_location_list"
