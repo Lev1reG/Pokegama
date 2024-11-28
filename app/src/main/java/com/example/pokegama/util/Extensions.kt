@@ -1,17 +1,18 @@
 package com.example.pokegama.util
 
 import android.content.Context
-import android.content.res.Configuration
-import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.example.pokegama.R
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 fun Context.showToast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -41,6 +42,30 @@ fun getBackgroundColor(context: Context, faculty: String): Int {
     }
 }
 
+fun haversine(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+    val radius = 6378137
+    val lat1Rad = Math.toRadians(lat1)
+    val lon1Rad = Math.toRadians(lon1)
+    val lat2Rad = Math.toRadians(lat2)
+    val lon2Rad = Math.toRadians(lon2)
+
+    val dLat = lat2Rad - lat1Rad
+    val dLon = lon2Rad - lon1Rad
+
+    val a = sin(dLat / 2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(dLon / 2).pow(2)
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    return radius * c
+}
+
+fun formatDistance(distance: Double): String {
+    return when {
+        distance >= 1000 -> "${(distance / 1000).roundOff()} km"
+        else -> "${distance.roundOff()} m"
+    }
+}
+
+
 
 fun Long.getFormattedTime(): String {
     val pattern = "hh:mm a"
@@ -48,7 +73,7 @@ fun Long.getFormattedTime(): String {
     return dateFormat.format(this)
 }
 
-fun Float.roundOff(): Float {
+fun Double.roundOff(): Float {
     val format = DecimalFormat("#.##")
     format.roundingMode = RoundingMode.CEILING
     return format.format(this).toFloat()

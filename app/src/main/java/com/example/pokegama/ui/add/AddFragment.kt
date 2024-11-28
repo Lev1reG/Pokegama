@@ -154,7 +154,7 @@ class AddFragment : Fragment(R.layout.fragment_add) {
             viewModel.setLatitude(latitude)
             viewModel.setLongitude(longitude)
 
-            viewModel.emitMessage("Lat: ${viewModel.uiState.value.latitude}, Lng: ${viewModel.uiState.value.longitude}")
+            Log.d("MapsHandler","Lat: ${viewModel.uiState.value.latitude}, Lng: ${viewModel.uiState.value.longitude}, Distance from Lapangan Pancasila: ${haversine(-7.77083, 110.37762, latitude, longitude)}")
             true
         }
     }
