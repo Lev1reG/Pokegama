@@ -209,7 +209,9 @@
 
             <FrameLayout
                 android:layout_width="wrap_content"
-                android:layout_height="300dp">
+                android:layout_height="300dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp">
 
                 <com.mapbox.maps.MapView
                     android:id="@+id/mapView"
