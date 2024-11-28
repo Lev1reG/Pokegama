@@ -72,6 +72,8 @@ class AddFragment : Fragment(R.layout.fragment_add) {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect {
                     binding.loadingLayout.loadingLayout.isVisible = it.isLoading
+                    binding.addfacilitySubmit.isEnabled = !it.isLoading
+                    binding.addfacilityFacilityphotoButton.isEnabled = !it.isLoading
                 }
             }
         }
