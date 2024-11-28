@@ -21,6 +21,8 @@ class FacilitiesViewModel @Inject constructor(
     private val _events = MutableSharedFlow<FacilitiesScreenEvents>()
     val events = _events.asSharedFlow()
 
+    val UGMCoord = Pair(-7.77083, 110.37762)
+
     init {
         viewModelScope.launch {
             loadFacility()
@@ -28,8 +30,10 @@ class FacilitiesViewModel @Inject constructor(
         }
     }
 
-    private fun onLocationChanged(lat: Double, lon: Double) {
+    fun onLocationChanged(lat: Double, lon: Double) {
         updateUserLocation(lat, lon)
+        if(haversine(lat, lon, UGMCoord.first, UGMCoord.second) > 3000)
+            emitMessage("Anda terlalu jauh dari UGM")
     }
 
     private fun updateUserLocation(lat: Double, lon: Double) {
@@ -86,6 +90,12 @@ class FacilitiesViewModel @Inject constructor(
     fun setFacilityTypeAndLoad(type: String) {
         viewModelScope.launch {
             _uiState.emit(_uiState.value.copy(facilityType = type))
+        }
+    }
+
+    fun setLastUpdate(type: Long){
+        viewModelScope.launch {
+            _uiState.emit(_uiState.value.copy(lastUpdate = type))
         }
     }
 

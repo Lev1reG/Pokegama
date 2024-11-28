@@ -1,12 +1,21 @@
 package com.example.pokegama.ui.facilities
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.view.MotionEvent
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -21,8 +30,10 @@ import com.google.gson.JsonObject
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.CoordinateBounds
+import com.mapbox.maps.ImageHolder
+import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
-import com.mapbox.maps.plugin.annotation.OnAnnotationClickListener
+import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.CircleAnnotation
 import com.mapbox.maps.plugin.annotation.generated.CircleAnnotationManager
@@ -30,8 +41,28 @@ import com.mapbox.maps.plugin.annotation.generated.CircleAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.OnCircleAnnotationClickListener
 import com.mapbox.maps.plugin.annotation.generated.createCircleAnnotationManager
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
+import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin
+import com.mapbox.maps.plugin.locationcomponent.location
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import com.mapbox.geojson.LineString
+import com.mapbox.maps.MapView
+import com.mapbox.maps.extension.style.layers.generated.lineLayer
+import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
+import com.mapbox.api.directions.v5.models.DirectionsResponse
+import com.mapbox.api.directions.v5.DirectionsCriteria
+import com.mapbox.api.directions.v5.MapboxDirections
+import com.mapbox.api.directions.v5.models.DirectionsRoute
+import com.mapbox.api.directions.v5.models.RouteOptions
+import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.sources.addSource
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+
 
 @AndroidEntryPoint
 class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
@@ -39,8 +70,13 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
     private val binding by viewBinding(FragmentFacilitiesBinding::bind)
     private val viewModel by viewModels<FacilitiesViewModel>()
     private val facilityAdapter = FacilitiesAdapter()
+
+    private val routeSourceId = "route-source"
+    private val routeLayerId = "route-layer"
     private val internetChecker: InternetChecker by lazy { InternetChecker(requireContext()) }
 
+    private lateinit var handler: Handler
+    private lateinit var mapboxMap: MapboxMap
     private lateinit var circleAnnotationManager: CircleAnnotationManager
 
     @SuppressLint("ClickableViewAccessibility")
@@ -56,11 +92,15 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
             binding.mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
                 val bitmap = BitmapFactory.decodeResource(resources, R.drawable.red_pin)
                 style.addImage("red-pin-icon-id", bitmap)
+                mapboxMap = binding.mapView.mapboxMap
+                enableLocationComponent()
             }
         } else {
             binding.mapView.mapboxMap.loadStyle(Style.LIGHT) { style ->
                 val bitmap = BitmapFactory.decodeResource(resources, R.drawable.red_pin)
                 style.addImage("red-pin-icon-id", bitmap)
+                mapboxMap = binding.mapView.mapboxMap
+                enableLocationComponent()
             }
         }
 
@@ -108,6 +148,8 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
                 .withData(JsonObject().apply {
                     addProperty("name", facility.name)
                     addProperty("type", facility.type)
+                    addProperty("lat", facility.latitude)
+                    addProperty("lon", facility.longitude)
                 })
             circleAnnotationManager.create(circleAnnotationOptions)
         }
@@ -118,6 +160,8 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
             val data = annotation.getData()
             val facilityName = data?.asJsonObject?.get("name")?.asString
             val facilityType = data?.asJsonObject?.get("type")?.asString
+            val facilityLat = data?.asJsonObject?.get("lat")?.asDouble
+            val facilityLon = data?.asJsonObject?.get("lon")?.asDouble
             val text = "$facilityType $facilityName"
 
             if (currentDisplayedAnnotation != null) {
@@ -133,6 +177,21 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
             binding.popupLayout.popupLayout.y = screenLocation.y.toFloat() - binding.popupLayout.popupLayout.height
 
             currentDisplayedAnnotation = annotation
+            val userPoint =
+                viewModel.uiState.value.userLocation?.let { Point.fromLngLat(it.second, it.first) }
+            val destinationPoint: Point? = facilityLat?.let { lat ->
+                facilityLon?.let { lon ->
+                    Point.fromLngLat(lon, lat)
+                }
+            }
+
+            binding.mapView.mapboxMap.loadStyle(Style.LIGHT) { style ->
+                if (userPoint != null) {
+                    if (destinationPoint != null) {
+                        drawRoute(style, userPoint, destinationPoint)
+                    }
+                }
+            }
 
             Log.d("FacilitiesFragment","$facilityName")
             true
@@ -193,17 +252,151 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
         }
     }
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                checkAndEnableLocation()
+            }
+        }
+
+
+    private fun checkPermissions() {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                checkAndEnableLocation()
+            }
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+    }
+
+    private fun checkAndEnableLocation() {
+        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+
+        if (isLocationEnabled) {
+            enableLocationComponent()
+        } else {
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            startActivity(intent)
+        }
+    }
+
+
+    private lateinit var locationComponentPlugin: LocationComponentPlugin
+
+    private fun enableLocationComponent() {
+        locationComponentPlugin = binding.mapView.location
+        val imageHolder = ImageHolder.from(R.drawable.user_puck_icon)
+
+        locationComponentPlugin.updateSettings {
+            enabled = true
+            locationPuck = LocationPuck2D(
+                topImage = imageHolder
+            )
+        }
+
+        locationComponentPlugin.addOnIndicatorPositionChangedListener { point ->
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - viewModel.uiState.value.lastUpdate >= 5000) {
+                val latitude = point.latitude()
+                val longitude = point.longitude()
+                Log.d("Location", "Lat: $latitude, Long: $longitude")
+
+                // Update user location
+                viewModel.onLocationChanged(latitude, longitude)
+
+                // Update the last update time
+                viewModel.setLastUpdate(currentTime)
+            }
+        }
+    }
+
+    private fun removeRoute(style: Style) {
+        if (style.styleSourceExists(routeSourceId)) {
+            style.removeStyleSource(routeSourceId)
+        }
+        if (style.styleLayerExists(routeLayerId)) {
+            style.removeStyleLayer(routeLayerId)
+        }
+    }
+
+    private fun drawRoute(style: Style, origin: Point, destination: Point) {
+        removeRoute(style)
+
+        val routeOptions = RouteOptions.builder()
+            .coordinatesList(listOf(origin, destination))
+            .profile(DirectionsCriteria.PROFILE_DRIVING)
+            .overview(DirectionsCriteria.OVERVIEW_FULL)
+            .build()
+
+        val client = MapboxDirections.builder()
+            .routeOptions(routeOptions)
+            .accessToken(getString(R.string.mapbox_access_token))
+            .build()
+
+        client.enqueueCall(object : Callback<DirectionsResponse> {
+            override fun onResponse(call: Call<DirectionsResponse>, response: Response<DirectionsResponse>) {
+                if (response.isSuccessful && response.body() != null) {
+                    val routes = response.body()!!.routes()
+                    if (routes.isNotEmpty()) {
+                        val route = routes[0]
+                        val geometry = route.geometry()
+                        val routeCoordinates = geometry?.let {
+                            LineString.fromPolyline(
+                                it, 6
+                            ).coordinates()
+                        }
+                        style.addSource(
+                            geoJsonSource(routeSourceId) {
+                                routeCoordinates?.let { LineString.fromLngLats(it) }
+                                    ?.let { geometry(it) }
+                            }
+                        )
+                        style.addLayer(
+                            lineLayer(routeLayerId, routeSourceId) {
+                                lineColor("blue")
+                                lineWidth(5.0)
+                            }
+                        )
+                    } else {
+                        viewModel.emitMessage("No routes found")
+                    }
+                } else {
+                    // Handle unsuccessful response
+                    viewModel.emitMessage("Response failed: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<DirectionsResponse>, t: Throwable) {
+                // Handle failure
+                t.printStackTrace()
+            }
+        })
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        handler = Handler(Looper.getMainLooper())
         circleAnnotationManager = binding.mapView.annotations.createCircleAnnotationManager()
         handleMapView()
         collectFacilityType()
         initRecyclerView()
         collectUiState()
         collectUiEvents()
+        checkPermissions()
+
     }
 
     private fun openNoInternetDialog() {
         NoInternetDialogFragment().show(parentFragmentManager, OPEN_NO_INTERNET_DIALOG)
+    }
+
+    companion object {
+        private const val PERMISSION_REQUEST_CODE = 1001
     }
 }
