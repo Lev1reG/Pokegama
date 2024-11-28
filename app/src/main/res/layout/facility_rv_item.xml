@@ -75,11 +75,11 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="@{facilityItem.faculty}"
+                    app:formattedDistance="@{facilityItem.distance}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="1056" />
+                    tools:text="(1056 m)" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView

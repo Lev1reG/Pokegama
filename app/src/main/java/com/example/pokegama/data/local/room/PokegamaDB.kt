@@ -6,7 +6,7 @@ import com.example.pokegama.data.model.local.Facility
 
 @Database(
     entities = [Facility::class],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 abstract class PokegamaDB : RoomDatabase() {

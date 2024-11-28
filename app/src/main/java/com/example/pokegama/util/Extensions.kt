@@ -3,6 +3,8 @@ package com.example.pokegama.util
 import android.content.Context
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import android.widget.TextView
+import androidx.databinding.BindingAdapter
 import com.example.pokegama.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.RoundingMode
@@ -58,6 +60,17 @@ fun haversine(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
     return radius * c
 }
 
+@BindingAdapter("formattedDistance")
+fun TextView.setFormattedDistance(distance: Double?) {
+    distance?.let {
+        text = when {
+            it >= 1000 -> "${(it / 1000).roundOff()} km"
+            else -> "(${it.roundOff()}m)"
+        }
+    }
+}
+
+
 fun formatDistance(distance: Double): String {
     return when {
         distance >= 1000 -> "${(distance / 1000).roundOff()} km"
@@ -74,7 +87,7 @@ fun Long.getFormattedTime(): String {
 }
 
 fun Double.roundOff(): Float {
-    val format = DecimalFormat("#.##")
+    val format = DecimalFormat("#.#")
     format.roundingMode = RoundingMode.CEILING
     return format.format(this).toFloat()
 }

@@ -13,6 +13,7 @@ data class Facility(
     val longitude: Double = 0.0,
     val description: String? = null,
     var isAccepted: Boolean = false,
+    val distance: Double? = null,
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0
 )

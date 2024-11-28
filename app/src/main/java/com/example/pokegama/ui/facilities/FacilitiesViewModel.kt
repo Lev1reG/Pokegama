@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokegama.data.repo.FacilityRepo
+import com.example.pokegama.ui.add.AddScreenEvents
 import com.example.pokegama.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -27,11 +28,43 @@ class FacilitiesViewModel @Inject constructor(
         }
     }
 
+    private fun onLocationChanged(lat: Double, lon: Double) {
+        updateUserLocation(lat, lon)
+    }
+
+    private fun updateUserLocation(lat: Double, lon: Double) {
+        val currentState = _uiState.value
+        _uiState.value = currentState.copy(userLocation = Pair(lat, lon))
+
+        // Trigger re-sorting of facilities if facilityItems are already loaded
+        if (currentState.facilityItems.isNotEmpty()) {
+            sortFacilitiesByDistance()
+        }
+    }
+
+    private fun sortFacilitiesByDistance() {
+        _uiState.value.userLocation?.let { (userLat, userLon) ->
+            val sortedFacilities = _uiState.value.facilityItems.map { facility ->
+                val distance = haversine(userLat, userLon, facility.latitude, facility.longitude)
+                facility.copy(distance = distance)
+            }.sortedBy { it.distance }
+            _uiState.value = _uiState.value.copy(facilityItems = sortedFacilities)
+        }
+    }
+
+
     private fun collectFacility() = viewModelScope.launch {
-        uiState.value.facilityType?.let {
+        uiState.value.facilityType?.let { it ->
             facilityRepo.getFacilityOfType(it).collect { facilities ->
+                val userLocation = _uiState.value.userLocation
                 Log.d("FacilitiesViewModel", "Facilities collected: $facilities")
-                _uiState.value = _uiState.value.copy(facilityItems = facilities)
+                val facilitiesWithDistance = userLocation?.let { (userLat, userLon) ->
+                    facilities.map { facility ->
+                        val distance = haversine(userLat, userLon, facility.latitude, facility.longitude)
+                        facility.copy(distance = distance)
+                    }.sortedBy { it.distance }
+                } ?: facilities
+                _uiState.value = _uiState.value.copy(facilityItems = facilitiesWithDistance)
             }
         }
     }
@@ -54,6 +87,11 @@ class FacilitiesViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.emit(_uiState.value.copy(facilityType = type))
         }
+    }
+
+    fun emitMessage(message: String) = viewModelScope.launch {
+        val event = FacilitiesScreenEvents.ShowToast(message)
+        _events.emit(event)
     }
 
     private fun handleError(resource: Resource.Error<*>) = viewModelScope.launch {

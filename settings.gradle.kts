@@ -1,5 +1,3 @@
-val mapboxToken: String? = settings.extra["MAPBOX_DOWNLOADS_TOKEN"] as String?
-
 pluginManagement {
     repositories {
         google {
@@ -26,7 +24,7 @@ dependencyResolutionManagement {
             }
             credentials {
                 username = "mapbox"
-                password = mapboxToken
+                password = settings.extra["MAPBOX_DOWNLOADS_TOKEN"] as String
             }
         }
     }
