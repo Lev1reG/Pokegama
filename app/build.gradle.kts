@@ -106,7 +106,10 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     //Mapbox
+    implementation("com.mapbox.navigationcore:navigation:3.5.2")
     implementation("com.mapbox.maps:android:11.8.0")
+    implementation ("com.mapbox.navigationcore:android:3.5.2")
+    implementation ("com.mapbox.navigationcore:ui-components:3.5.2")
 
     //image loading library
     implementation(libs.coil)

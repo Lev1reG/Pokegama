@@ -1,3 +1,5 @@
+val mapboxToken: String? = settings.extra["MAPBOX_DOWNLOADS_TOKEN"] as String?
+
 pluginManagement {
     repositories {
         google {
@@ -19,6 +21,13 @@ dependencyResolutionManagement {
         maven("https://jitpack.io")
         maven {
             url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+            credentials {
+                username = "mapbox"
+                password = mapboxToken
+            }
         }
     }
 }
