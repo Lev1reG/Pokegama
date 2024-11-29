@@ -45,19 +45,16 @@ import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin
 import com.mapbox.maps.plugin.locationcomponent.location
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import com.mapbox.geojson.LineString
-import com.mapbox.maps.MapView
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.api.directions.v5.models.DirectionsResponse
 import com.mapbox.api.directions.v5.DirectionsCriteria
 import com.mapbox.api.directions.v5.MapboxDirections
-import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.plugin.PuckBearing
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -291,13 +288,19 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
 
     private fun enableLocationComponent() {
         locationComponentPlugin = binding.mapView.location
-        val imageHolder = ImageHolder.from(R.drawable.user_puck_icon)
+        val topImage = ImageHolder.from(R.drawable.user_puck_icon)
+        val bearingImage = ImageHolder.from(com.mapbox.navigation.R.drawable.mapbox_user_bearing_icon)
+        val shadowImage = ImageHolder.from(com.mapbox.navigation.R.drawable.mapbox_user_stroke_icon)
 
         locationComponentPlugin.updateSettings {
             enabled = true
             locationPuck = LocationPuck2D(
-                topImage = imageHolder
+                topImage = topImage,
+                bearingImage = bearingImage,
+                shadowImage = shadowImage
             )
+            puckBearing = PuckBearing.HEADING
+            puckBearingEnabled = true
         }
 
         locationComponentPlugin.addOnIndicatorPositionChangedListener { point ->
@@ -307,10 +310,7 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
                 val longitude = point.longitude()
                 Log.d("Location", "Lat: $latitude, Long: $longitude")
 
-                // Update user location
                 viewModel.onLocationChanged(latitude, longitude)
-
-                // Update the last update time
                 viewModel.setLastUpdate(currentTime)
             }
         }
@@ -367,13 +367,11 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
                         viewModel.emitMessage("No routes found")
                     }
                 } else {
-                    // Handle unsuccessful response
                     viewModel.emitMessage("Response failed: ${response.message()}")
                 }
             }
 
             override fun onFailure(call: Call<DirectionsResponse>, t: Throwable) {
-                // Handle failure
                 t.printStackTrace()
             }
         })
@@ -394,9 +392,5 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
 
     private fun openNoInternetDialog() {
         NoInternetDialogFragment().show(parentFragmentManager, OPEN_NO_INTERNET_DIALOG)
-    }
-
-    companion object {
-        private const val PERMISSION_REQUEST_CODE = 1001
     }
 }
