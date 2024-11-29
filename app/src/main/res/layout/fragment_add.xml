@@ -96,7 +96,7 @@
                 <EditText
                     android:id="@+id/addfacility_nameTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/stroke_outer"
                     android:fontFamily="@font/poppins_regular"
@@ -243,7 +243,7 @@
                 <EditText
                     android:id="@+id/addfacility_descriptionTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/stroke_outer"
                     android:fontFamily="@font/poppins_regular"
