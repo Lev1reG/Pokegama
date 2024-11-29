@@ -40,7 +40,8 @@ fun getBackgroundColor(context: Context, faculty: String): Int {
         "PAU" -> ContextCompat.getColor(context, R.color.yellow_700)
         "SV" -> ContextCompat.getColor(context, R.color.yellow_800)
         "FKT" -> ContextCompat.getColor(context, R.color.teal_700)
-        else -> ContextCompat.getColor(context, R.color.teal_200)
+        "BIO" -> ContextCompat.getColor(context, R.color.teal_200)
+        else -> ContextCompat.getColor(context, R.color.blue_300)
     }
 }
 
