@@ -143,6 +143,7 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
                 .withCircleStrokeWidth(3.0)
                 .withCircleStrokeColor(ContextCompat.getColor(requireContext(), R.color.white))
                 .withData(JsonObject().apply {
+                    addProperty("id", facility.id)
                     addProperty("name", facility.name)
                     addProperty("type", facility.type)
                     addProperty("lat", facility.latitude)
@@ -196,13 +197,59 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
 
         binding.mapView.mapboxMap.subscribeCameraChanged {
             binding.popupLayout.popupLayout.isVisible = false
+
             currentDisplayedAnnotation = null
         }
 
         binding.mapView.mapboxMap.addOnMapClickListener {
+            binding.mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
+                removeRoute(style)
+            }
             binding.popupLayout.popupLayout.isVisible = false
             currentDisplayedAnnotation = null
             true
+        }
+
+        facilityAdapter.onItemClick = { facility ->
+            val annotation = circleAnnotationManager.annotations.find {
+                it.getData()?.asJsonObject?.get("id")?.asInt == facility.id
+            }
+
+            annotation?.let {
+                val data = it.getData()
+                val facilityName = data?.asJsonObject?.get("name")?.asString
+                val facilityType = data?.asJsonObject?.get("type")?.asString
+                val facilityLat = data?.asJsonObject?.get("lat")?.asDouble
+                val facilityLon = data?.asJsonObject?.get("lon")?.asDouble
+                val text = "$facilityType $facilityName"
+
+                if (currentDisplayedAnnotation != null) {
+                    binding.popupLayout.popupLayout.isVisible = false
+                    currentDisplayedAnnotation = null
+                }
+
+                binding.popupLayout.popupLayout.isVisible = true
+                binding.popupLayout.locationName.text = text
+                val screenLocation = binding.mapView.mapboxMap
+                    .pixelForCoordinate(it.point)
+                binding.popupLayout.popupLayout.x = screenLocation.x.toFloat() - binding.popupLayout.popupLayout.width / 2
+                binding.popupLayout.popupLayout.y = screenLocation.y.toFloat() - binding.popupLayout.popupLayout.height
+
+                currentDisplayedAnnotation = it
+                val userPoint =
+                    viewModel.uiState.value.userLocation?.let { loc -> Point.fromLngLat(loc.second, loc.first) }
+                val destinationPoint = facilityLat?.let { lat ->
+                    facilityLon?.let { lon -> Point.fromLngLat(lon, lat) }
+                }
+
+                binding.mapView.mapboxMap.loadStyle(Style.LIGHT) { style ->
+                    if (userPoint != null && destinationPoint != null) {
+                        drawRoute(style, userPoint, destinationPoint)
+                    }
+                }
+
+                Log.d("FacilitiesFragment", "$facilityName")
+            }
         }
     }
 

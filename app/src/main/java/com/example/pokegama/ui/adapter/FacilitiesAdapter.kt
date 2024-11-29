@@ -10,8 +10,11 @@ import com.example.pokegama.data.model.local.Facility
 import com.example.pokegama.databinding.FacilityRvItemBinding
 import com.example.pokegama.util.*
 
-class FacilitiesAdapter :
+class FacilitiesAdapter:
     ListAdapter<Facility, FacilitiesAdapter.viewHolder>(DiffCall()) {
+
+    var onItemClick: ((Facility) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewHolder {
         val binding =
             FacilityRvItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -20,15 +23,19 @@ class FacilitiesAdapter :
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item)
+        onItemClick?.let { holder.bind(item, it) }
     }
 
     inner class viewHolder(private val binding: FacilityRvItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Facility) {
+        fun bind(data: Facility, onItemClick: (Facility) -> Unit) {
             binding.facilityItem = data
             val backgroundColor = getBackgroundColor(binding.root.context, data.faculty)
             (binding.facultyName.background as GradientDrawable).setColor(backgroundColor)
+
+            binding.root.setOnClickListener {
+                onItemClick(data)
+            }
         }
     }
 
