@@ -50,14 +50,13 @@
 
                 <TextView
                     android:id="@+id/textView6"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="32dp"
                     android:ellipsize="end"
                     android:fontFamily="@font/poppins_semibold"
-                    android:maxLines="1"
-                    android:singleLine="true"
+                    android:maxLines="2"
                     android:text="@{facilityItem.type + ' ' + facilityItem.name}"
                     android:textColor="@color/black"
                     android:textSize="16sp"
@@ -66,7 +65,7 @@
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toEndOf="@+id/faculty_name"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Toyagama DTETI" />
+                    tools:text="Sepeda Kampus Taman Biologi" />
 
                 <TextView
                     android:id="@+id/textView7"

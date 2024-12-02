@@ -65,7 +65,7 @@ fun haversine(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
 fun TextView.setFormattedDistance(distance: Double?) {
     distance?.let {
         text = when {
-            it >= 1000 -> "${(it / 1000).roundOff()} km"
+            it >= 1000 -> "(${(it / 1000).roundOff()} km)"
             else -> "(${it.roundOff()}m)"
         }
     }
