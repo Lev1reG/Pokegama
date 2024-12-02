@@ -31,6 +31,9 @@ class FacilitiesAdapter:
         fun bind(data: Facility, onItemClick: (Facility) -> Unit) {
             binding.facilityItem = data
             val backgroundColor = getBackgroundColor(binding.root.context, data.faculty)
+            if(data.faculty == "UGM"){
+                binding.facultyName.textSize = 15f
+            }
             (binding.facultyName.background as GradientDrawable).setColor(backgroundColor)
 
             binding.root.setOnClickListener {

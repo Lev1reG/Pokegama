@@ -73,7 +73,7 @@ class AddViewModel @Inject constructor(
         val facility = FacilityDTO(
             type = _uiState.value.type,
             name = _uiState.value.name,
-            faculty = _uiState.value.faculty,
+            faculty = if (_uiState.value.faculty == "LAIN-LAIN") "UGM" else _uiState.value.faculty,
             facilityImg = _uiState.value.facilityImg,
             latitude = _uiState.value.latitude,
             longitude = _uiState.value.longitude,

@@ -53,6 +53,7 @@
         <item>FEB</item>
         <item>PAU</item>
         <item>SV</item>
+        <item>LAIN-LAIN</item>
     </string-array>
     <string name="addfacility_title_location">Lokasi </string>
     <string name="addfacility_title_facilityphoto">Foto Fasilitas (untuk Verifikasi)</string>
