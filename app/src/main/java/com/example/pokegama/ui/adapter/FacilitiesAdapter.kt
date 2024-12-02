@@ -33,6 +33,8 @@ class FacilitiesAdapter:
             val backgroundColor = getBackgroundColor(binding.root.context, data.faculty)
             if(data.faculty == "UGM"){
                 binding.facultyName.textSize = 15f
+            } else{
+                binding.facultyName.textSize = 18f
             }
             (binding.facultyName.background as GradientDrawable).setColor(backgroundColor)
 
