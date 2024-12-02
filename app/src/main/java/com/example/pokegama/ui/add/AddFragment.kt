@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,6 +28,7 @@ import com.example.pokegama.ui.dialogs.NoInternetDialogFragment
 import com.example.pokegama.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import kotlinx.coroutines.launch
@@ -47,10 +49,19 @@ class AddFragment : Fragment(R.layout.fragment_add) {
     private lateinit var pointAnnotationManager: PointAnnotationManager
     private val internetChecker: InternetChecker by lazy { InternetChecker(requireContext()) }
 
+    private var isSubmit = false
+    private val navView: BottomNavigationView by lazy { requireActivity().findViewById(R.id.nav_view) }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupDropdownAdapter()
         handleMapView()
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if(isSubmit){
+                viewModel.emitMessage("Sedang mengunggah! Mohon Tunggu!")
+            }
+        }
 
         binding.addfacilityFacilityAutoComplete.doOnTextChanged { text, _, _, _ ->
             viewModel.onTypeChange(text.toString())
@@ -166,6 +177,10 @@ class AddFragment : Fragment(R.layout.fragment_add) {
                     binding.loadingLayout.loadingLayout.isVisible = it.isLoading
                     binding.addfacilitySubmit.isEnabled = !it.isLoading
                     binding.addfacilityFacilityphotoButton.isEnabled = !it.isLoading
+                    for (i in 0 until navView.menu.size()) {
+                        navView.menu.getItem(i).isEnabled = !it.isLoading
+                    }
+                    isSubmit = it.isLoading
                 }
             }
         }
