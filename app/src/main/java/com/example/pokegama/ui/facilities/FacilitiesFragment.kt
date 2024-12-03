@@ -52,7 +52,7 @@ import com.mapbox.api.directions.v5.models.DirectionsResponse
 import com.mapbox.api.directions.v5.DirectionsCriteria
 import com.mapbox.api.directions.v5.MapboxDirections
 import com.mapbox.api.directions.v5.models.RouteOptions
-import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.addLayerBelow
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.plugin.PuckBearing
 import retrofit2.Call
@@ -404,11 +404,11 @@ class FacilitiesFragment : Fragment(R.layout.fragment_facilities) {
                                     ?.let { geometry(it) }
                             }
                         )
-                        style.addLayer(
+                        style.addLayerBelow(
                             lineLayer(routeLayerId, routeSourceId) {
                                 lineColor("blue")
                                 lineWidth(5.0)
-                            }
+                            }, "mapbox-location-indicator-layer"
                         )
                     } else {
                         viewModel.emitMessage("No routes found")
