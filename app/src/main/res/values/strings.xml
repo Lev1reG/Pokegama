@@ -36,6 +36,7 @@
     <string-array name="faculty_list">
         <item>FKT</item>
         <item>FK</item>
+        <item>FA</item>
         <item>FKH</item>
         <item>FKG</item>
         <item>SP</item>

@@ -28,6 +28,7 @@ fun getBackgroundColor(context: Context, faculty: String): Int {
         "FKG" -> ContextCompat.getColor(context, R.color.blue_700)
         "SP" -> ContextCompat.getColor(context, R.color.blue_800)
         "FIB" -> ContextCompat.getColor(context, R.color.blue_900)
+        "FA" -> ContextCompat.getColor(context, R.color.purple_300)
         "FH" -> ContextCompat.getColor(context, R.color.purple_400)
         "PA" -> ContextCompat.getColor(context, R.color.purple_500)
         "PET" -> ContextCompat.getColor(context, R.color.purple_600)
