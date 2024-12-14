@@ -9,7 +9,9 @@ import com.example.pokegama.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
+import java.util.Locale
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
@@ -89,10 +91,11 @@ fun Long.getFormattedTime(): String {
 }
 
 fun Double.roundOff(): Float {
-    val format = DecimalFormat("#.#")
+    val format = DecimalFormat("#.#", DecimalFormatSymbols(Locale.US))
     format.roundingMode = RoundingMode.CEILING
-    return format.format(this).toFloat()
+    return format.format(this).replace(",", ".").toFloat()
 }
+
 
 fun Context.showDialog(
     title: String,
